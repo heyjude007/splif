@@ -9,7 +9,7 @@ def frameExtract(gifpath, dest):
         while True:
             currentframe = img.copy()
             currentframe = currentframe.convert('RGB')
-            currentframe.save(f"{dest}/frame{img.tell()}.jpg")
+            currentframe.save(f"{dest}/frame{img.tell()}.{selected_option.get()}")
             frame += 1
             img.seek(frame)
     except EOFError:
@@ -32,7 +32,7 @@ def split_gif():
     dest = dest_entry.get()
     try:
         frameExtract(gifpath, dest)
-        status_label.config(text="GIF Splitting Complete!")
+        status_label.config(text=f"GIF Splitting Complete!")
     except FileNotFoundError:
         status_error.config(text="File/Folder doesn't exist or can't be accessed.")
     root.after(5000, clear_status_messages)  # Schedule the function to clear messages after 5 seconds
@@ -43,40 +43,50 @@ def clear_status_messages():
 
 # Create the main window
 root = tk.Tk()
-root.title("Splif GUI v0.1.0")
+root.title("Splif GUI v0.1.1")
 root.resizable(False, False)
 
 # Create and configure frames
 frame = tk.Frame(root, padx=20, pady=20)
 frame.pack(padx=10, pady=10)
 
-# Create and configure labels and buttons
+# Create and configure labels and buttons for GIF input/output
 gifpath_label = tk.Label(frame, text="Select a GIF:")
 gifpath_label.grid(row=0, column=0, padx=10, pady=5, sticky="e")
 
 gifpath_entry = tk.Entry(frame, width=40)
-gifpath_entry.grid(row=0, column=1, padx=10, pady=5)
+gifpath_entry.grid(row=0, column=1, columnspan=2, padx=10, pady=5)
 
 browse_gif_button = tk.Button(frame, text="Browse", command=browse_gif)
-browse_gif_button.grid(row=0, column=2, padx=10, pady=5)
+browse_gif_button.grid(row=0, column=3, padx=10, pady=5)
 
 dest_label = tk.Label(frame, text="Select Output Folder:")
 dest_label.grid(row=1, column=0, padx=10, pady=5, sticky="e")
 
 dest_entry = tk.Entry(frame, width=40)
-dest_entry.grid(row=1, column=1, padx=10, pady=5)
+dest_entry.grid(row=1, column=1, columnspan=2, padx=10, pady=5)
 
 browse_dest_button = tk.Button(frame, text="Browse", command=browse_dest)
-browse_dest_button.grid(row=1, column=2, padx=10, pady=5)
+browse_dest_button.grid(row=1, column=3, padx=10, pady=5)
+
+# Create a label and dropdown menu for the selected option
+option_label = tk.Label(frame, text="Select a format:")
+option_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+
+options = ["JPG", "PNG", "BMP"]
+selected_option = tk.StringVar(root)
+selected_option.set(options[0])  # Set the default selected option
+dropdown_menu = tk.OptionMenu(frame, selected_option, *options)
+dropdown_menu.grid(row=2, column=1, columnspan=2, padx=10, pady=5)
 
 split_button = tk.Button(frame, text="Split GIF", command=split_gif)
-split_button.grid(row=2, columnspan=3, padx=10, pady=10)
+split_button.grid(row=3, columnspan=4, padx=10, pady=10)
 
-status_label = tk.Label(frame, text="", fg="green", width=40)  # Adjust width as needed
-status_label.grid(row=3, column=0, columnspan=3)  # Use a separate row for status_label
+status_label = tk.Label(frame, text="", fg="green", width=40)
+status_label.grid(row=4, column=0, columnspan=4)
 
 status_error = tk.Label(frame, text="", fg="red")
-status_error.grid(row=4, column=0, columnspan=3)  # Use a separate row for status_error
+status_error.grid(row=5, column=0, columnspan=4)
 
 # Start the Tkinter main loop
 root.mainloop()
