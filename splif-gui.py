@@ -2,14 +2,14 @@ import tkinter as tk
 from tkinter import filedialog
 from PIL import Image
 
-def frameExtract(gifpath, dest):
+def frameExtract(gifpath, dest, quality):
     img = Image.open(gifpath)
     try:
         frame = 0
         while True:
             currentframe = img.copy()
             currentframe = currentframe.convert('RGB')
-            currentframe.save(f"{dest}/frame{img.tell()}.{selected_option.get()}")
+            currentframe.save(f"{dest}/frame{img.tell()}.{selected_option.get()}", quality=quality)
             frame += 1
             img.seek(frame)
     except EOFError:
@@ -30,8 +30,9 @@ def browse_dest():
 def split_gif():
     gifpath = gifpath_entry.get()
     dest = dest_entry.get()
+    quality = quality_slider.get()
     try:
-        frameExtract(gifpath, dest)
+        frameExtract(gifpath, dest, quality)
         status_label.config(text=f"GIF Splitting Complete!")
     except FileNotFoundError:
         status_error.config(text="File/Folder doesn't exist or can't be accessed.")
@@ -79,14 +80,22 @@ selected_option.set(options[0])  # Set the default selected option
 dropdown_menu = tk.OptionMenu(frame, selected_option, *options)
 dropdown_menu.grid(row=2, column=1, columnspan=2, padx=10, pady=5)
 
+# Add a slider for quality
+quality_label = tk.Label(frame, text="Select Quality (1-100):")
+quality_label.grid(row=3, column=0, padx=10, pady=5, sticky="e")
+
+quality_slider = tk.Scale(frame, from_=1, to=100, orient="horizontal")
+quality_slider.set(80)  # Set the default quality
+quality_slider.grid(row=3, column=1, columnspan=2, padx=10, pady=5)
+
 split_button = tk.Button(frame, text="Split GIF", command=split_gif)
-split_button.grid(row=3, columnspan=4, padx=10, pady=10)
+split_button.grid(row=4, columnspan=4, padx=10, pady=10)
 
 status_label = tk.Label(frame, text="", fg="green", width=40)
-status_label.grid(row=4, column=0, columnspan=4)
+status_label.grid(row=5, column=0, columnspan=4)
 
 status_error = tk.Label(frame, text="", fg="red")
-status_error.grid(row=5, column=0, columnspan=4)
+status_error.grid(row=6, column=0, columnspan=4)
 
 # Start the Tkinter main loop
 root.mainloop()
