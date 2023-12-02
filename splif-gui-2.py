@@ -43,6 +43,9 @@ def split_gif():
         status_error.config(text="File/Folder doesn't exist or can't be accessed.")
     root.after(5000, clear_status_messages)
 
+def show_about():
+    tk.messagebox.showinfo(title="About", message="Placeholder")
+
 def clear_status_messages():
     status_label.config(text="")
     status_error.config(text="")
@@ -55,6 +58,15 @@ root.resizable(False, False)  # Makes the window a fixed size
 # Creates and configures frames
 frame = tk.Frame(root, padx=20, pady=20)
 frame.pack(padx=10, pady=10)
+
+# Creates a menubar
+menubar = tk.Menu(root)
+root.config(menu=menubar)
+file_menu = tk.Menu(menubar, tearoff=0)
+file_menu.add_command(label="About", command=show_about)
+file_menu.add_separator()
+file_menu.add_command(label="Exit", command=root.destroy)
+menubar.add_cascade(label="File", menu=file_menu)
 
 # Creates and configures labels and buttons for GIF input/output
 gif_path_label = tk.Label(frame, text="Select a GIF:")
