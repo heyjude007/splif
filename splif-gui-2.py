@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import filedialog
 from PIL import Image
 import os
+import webbrowser
 
 def frame_extract(gif_path, dest, quality):  # Frame extraction function
     img = Image.open(gif_path)
@@ -38,17 +39,12 @@ def split_gif():
     quality = quality_slider.get()
     try:
         frame_extract(gif_path, dest, quality)
-        status_label.config(text="GIF Splitting Complete!")
-    except FileNotFoundError:
-        status_error.config(text="File/Folder doesn't exist or can't be accessed.")
-    root.after(5000, clear_status_messages)
-
+        tk.messagebox.showinfo(title="Success!", message="GIF Splitting Complete!")
+    except (FileNotFoundError, AttributeError):
+        tk.messagebox.showerror(title="Error", message="File/Folder doesn't exist or can't be accessed.")
 def show_about():
-    tk.messagebox.showinfo(title="About", message="Placeholder")
+    tk.messagebox.showinfo(title="About", message="Splif - The GIF Splitter\nCoded by Judith Greaney 2023\nPackages used: OS, Webbrowser, Pillow and Tkinter\nVersion 1.0.0\nThis application is licensed under the GNU GPL-3.0 license.\nMore info on the license can be found in\nthis project's GitHub repository.")
 
-def clear_status_messages():
-    status_label.config(text="")
-    status_error.config(text="")
 
 # Tkinter config
 root = tk.Tk()  # Creates the main window
@@ -64,9 +60,11 @@ menubar = tk.Menu(root)
 root.config(menu=menubar)
 file_menu = tk.Menu(menubar, tearoff=0)
 file_menu.add_command(label="About", command=show_about)
+file_menu.add_command(label="Visit me on GitHub!", command=lambda: webbrowser.open("https://github.com/heyjude007"))
 file_menu.add_separator()
 file_menu.add_command(label="Exit", command=root.destroy)
 menubar.add_cascade(label="File", menu=file_menu)
+
 
 # Creates and configures labels and buttons for GIF input/output
 gif_path_label = tk.Label(frame, text="Select a GIF:")
@@ -101,12 +99,6 @@ quality_slider.grid(row=3, column=1, columnspan=2, padx=10, pady=5)
 # Split button
 split_button = tk.Button(frame, text="Split GIF", command=split_gif)
 split_button.grid(row=4, columnspan=4, padx=10, pady=10)
-
-# Status label/error
-status_label = tk.Label(frame, text="", fg="green", width=40)
-status_label.grid(row=5, column=0, columnspan=4)
-status_error = tk.Label(frame, text="", fg="red")
-status_error.grid(row=6, column=0, columnspan=4)
 
 # Start the Tkinter main loop
 root.mainloop()
